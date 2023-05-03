@@ -6,6 +6,7 @@
 #include <chrono>
 #include <fstream>
 #include <sstream>
+#include "argtable3.h"
 
 const size_t NODE_COUNT = 15606;
 const size_t EDGE_COUNT = 45878;
@@ -89,7 +90,15 @@ std::pair<std::array<int, NODE_COUNT+1>, std::array<int, EDGE_COUNT>> adjacencyA
 // TODO: change NODE_COUNT, EDGE_COUNT system
 void readGraphFile (std::string filename){
     std::string line;
-    std::ifstream MyReadFile (filename);
+    std::ifstream MyReadFile;
+    MyReadFile.open(filename);
+
+    if (MyReadFile){
+
+    } else {
+        std::cout << "Couldn't read graph file "<< filename << std::endl;
+        return;
+    }
 
     // Read Number of Nodes (n) and Number of Edges (m)
     getline (MyReadFile, line);
@@ -118,25 +127,11 @@ void readGraphFile (std::string filename){
     //printGraphShort(graph, 10);
 }
 
-
-
-int main(int argc, char** argv) {
+int mymain(int source, int target, std::string graphfile, std::string coordfile){
     // Start timer
     auto start = std::chrono::high_resolution_clock::now();
 
-    if (argc < 5){
-        std::cout << "Usage: Source Node, Target Node, Graph Filename, Coordinates Filename\n";
-        return 0;
-    }
-
-    // Reading Arguments from Command Line
-    int s = std::stoi(argv[1]);
-    int t = std::stoi(argv[2]);
-    std::string gfile = argv[3];
-    std::string cfile = argv[4];
-
-    readGraphFile(gfile);
-
+    readGraphFile(graphfile);
 
     /*
     // Example Edgelist
@@ -157,5 +152,64 @@ int main(int argc, char** argv) {
     auto duration = std::chrono::high_resolution_clock::now() - start;
     long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
     std::cout << "Time taken by algorithm: " << microseconds <<  " microseconds.\n";
+    return 0;
+}
 
+int main(int argc, char **argv) {
+    const char* progname = "practical";
+    struct arg_int *source = arg_int0("s", "source-node",NULL,          "define the source node (default is 1)");
+    struct arg_int *target = arg_int0("t", "target-node",NULL,          "define the target node (default is 2)");
+    struct arg_file *graphfile = arg_file0("g",NULL,"<input>",          "graph file name");
+    struct arg_file *coordfile = arg_file0("c",NULL,"<input>",          "coordinate file name");
+    struct arg_lit *help  = arg_lit0(NULL,"help",             "print this help and exit");
+    struct arg_end *end   = arg_end(20);
+    void* argtable[] = {source,target,graphfile,coordfile,help,end};
+    int nerrors;
+    int exitcode=0;
+
+    /* verify the argtable[] entries were allocated sucessfully */
+    if (arg_nullcheck(argtable) != 0){
+        /* NULL entries were detected, some allocations must have failed */
+        printf("%s: insufficient memory\n",progname);
+        exitcode=1;
+        goto exit;
+    }
+
+     /* Parse the command line as defined by argtable[] */
+    nerrors = arg_parse(argc,argv,argtable);
+
+    /* special case: '--help' takes precedence over error reporting */
+    if (help->count > 0){
+        printf("Usage: %s", progname);
+        arg_print_syntax(stdout,argtable,"\n");
+        arg_print_glossary(stdout,argtable,"  %-25s %s\n");
+        exitcode=0;
+        goto exit;
+    }
+
+    /* If the parser returned any errors then display them and exit */
+    if (nerrors > 0)
+        {
+        /* Display the error details contained in the arg_end struct.*/
+        arg_print_errors(stdout,end,progname);
+        printf("Try '%s --help' for more information.\n",progname);
+        exitcode=1;
+        goto exit;
+        }
+
+    /* special case: uname with no command line options induces brief help */
+    if (argc==1){
+        printf("Try '%s --help' for more information.\n",progname);
+        exitcode=0;
+        goto exit;
+    }
+
+    /* normal case: take the command line options at face value */
+    exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0]);
+
+    exit:
+    /* deallocate each non-null entry in argtable[] */
+    arg_freetable(argtable,sizeof(argtable)/sizeof(argtable[0]));
+
+    return exitcode;
 }
