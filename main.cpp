@@ -18,7 +18,13 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile)
     auto start = std::chrono::high_resolution_clock::now();
 
     // Run Dijkstra
-    Dijkstra(source, target, graph, nodeArray);
+    auto result = Dijkstra(source, target, graph, nodeArray);
+
+    int index = target-1;
+    while (result.second[index] != 0){
+        std::cout << result.second[index] + 1 << " " << result.first[index] << std::endl;
+        index = result.second[index];
+    }
 
     // End Timer
     auto duration = std::chrono::high_resolution_clock::now() - start;
