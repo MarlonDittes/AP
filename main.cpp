@@ -21,7 +21,7 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile)
     auto result = Dijkstra(source, target, graph, nodeArray);
 
     int index = target-1;
-    while (result.second[index] != 0){
+    while (result.second[index] != source-1){
         std::cout << result.second[index] + 1 << " " << result.first[index] << std::endl;
         index = result.second[index];
     }
