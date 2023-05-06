@@ -5,7 +5,7 @@ include(CTest)
 enable_testing()
 
 
-add_library(my_lib STATIC argtable3.c functions.cpp)
+add_library(my_lib STATIC argtable3.c functions.cpp heap.cpp)
 
 add_executable(practical main.cpp)
 target_link_libraries(practical PRIVATE my_lib)

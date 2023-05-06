@@ -5,14 +5,20 @@
 #include "argtable3.h"
 #include "node.h"
 #include "functions.h"
+#include "heap.h"
 
 // "Real main function"
 int mymain(int source, int target, std::string graphfile, std::string coordfile){
+    // Setup needed arrays
+    auto graph = readGraphFile(graphfile);
+    auto nodeArray = readCoordFile(coordfile);
+    allVisitedToFalse(nodeArray);
+
     // Start timer
     auto start = std::chrono::high_resolution_clock::now();
 
-    auto graph = readGraphFile(graphfile);
-    auto nodeArray = readCoordFile(coordfile);
+    // Run Dijkstra
+    Dijkstra(source, target, graph, nodeArray);
 
     // End Timer
     auto duration = std::chrono::high_resolution_clock::now() - start;
