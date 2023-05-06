@@ -1,61 +1,18 @@
 #include <iostream>
-#include <array>
-#include <utility>
 #include <vector>
 #include <ctime>
 #include <chrono>
-#include <fstream>
-#include <sstream>
 #include "argtable3.h"
-#include "graph.h"
+#include "node.h"
+#include "functions.h"
 
-// read a Graph File
-Graph readGraphFile (std::string filename){
-    std::string line;
-    std::ifstream MyReadFile;
-    MyReadFile.open(filename);
-    std::vector<std::pair<int, int>> EdgeList;
-
-    if (!MyReadFile){
-        std::cout << "Couldn't read graph file " << filename << ", try providing full path." << std::endl;
-        Graph g(EdgeList, 0 ,0);
-        return g;
-    }
-
-    // Read Number of Nodes (n) and Number of Edges (m)
-    getline (MyReadFile, line);
-    std::istringstream iss(line);
-    int n, m;
-    iss >> n;
-    iss >> m;
-
-    // Read edges, u counts at which line (Node) we are, v are corresponding neighbors
-    // Since the graph files we read range from Indices 1 to n, but our Array V starts at 0
-    // we have to decrease each Index by 1
-    int u,v;
-    u = 0;
-    while (getline (MyReadFile, line)){
-        std::istringstream iss(line);
-        while (iss >> v){
-            v--;
-            EdgeList.push_back(std::make_pair(u, v));
-        }
-        u++;
-    }
-
-    // Create and return Graph using Adjacency Array
-    Graph g(EdgeList, n, m);
-    return g;
-}
-
-
-
-// "Real" main function
+// "Real main function"
 int mymain(int source, int target, std::string graphfile, std::string coordfile){
     // Start timer
     auto start = std::chrono::high_resolution_clock::now();
 
-    Graph g = readGraphFile(graphfile);
+    auto graph = readGraphFile(graphfile);
+    auto nodeArray = readCoordFile(coordfile);
 
     // End Timer
     auto duration = std::chrono::high_resolution_clock::now() - start;
@@ -66,7 +23,7 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile)
 
 // Argtable Functionality
 int main(int argc, char **argv) {
-    const char* progname = "practical";
+    const char* progname = "./practical";
     struct arg_int *source = arg_int0("s", "source-node",NULL,          "define the source node (default is 1)");
     struct arg_int *target = arg_int0("t", "target-node",NULL,          "define the target node (default is 2)");
     struct arg_file *graphfile = arg_file0("g",NULL,"<input>",          "graph file source");
