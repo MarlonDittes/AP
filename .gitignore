@@ -145,5 +145,4 @@ ipch/
 *.e2e
 
 # Zusatz
-*.graph
-*.graph.xyz
+graph/
