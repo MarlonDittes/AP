@@ -20,17 +20,14 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile)
     // Run Dijkstra
     auto result = Dijkstra(source, target, graph, nodeArray);
 
-    int index = target-1;
-    while (result.second[index] != source-1){
-        std::cout << result.second[index] + 1 << " " << result.first[index] << std::endl;
-        index = result.second[index];
-    }
-
     // End Timer
     auto duration = std::chrono::high_resolution_clock::now() - start;
     long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
     std::cout << "Time taken by algorithm: " << microseconds <<  " microseconds.\n";
     return 0;
+
+    // Look at Parent Path
+    printParentPath(result, source, target);
 }
 
 // Argtable Functionality

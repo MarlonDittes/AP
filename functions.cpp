@@ -63,6 +63,7 @@ void printAdjArr (std::pair<std::vector<int>, std::vector<int>> adjacencyArray){
 
 // Create AdjArr from Graph file
 std::pair<std::vector<int>, std::vector<int>> readGraphFile (std::string filename){
+    std::cout << "Reading Graph file..." << std::endl;
     std::string line;
     std::ifstream MyReadFile;
     MyReadFile.open(filename);
@@ -102,6 +103,7 @@ std::pair<std::vector<int>, std::vector<int>> readGraphFile (std::string filenam
 
 // Create NodeArray from coordinate file
 std::vector<Node> readCoordFile (std::string filename){
+    std::cout << "Reading Coordinate File..." << std::endl;
     std::string line;
     std::ifstream MyReadFile;
     MyReadFile.open(filename);
@@ -121,8 +123,8 @@ std::vector<Node> readCoordFile (std::string filename){
         iss >> x;
         iss >> y;
         // create node with corresponding index, x ,y and push_back into nodeArray
-        Node n(i, x, y);
-        NodeArray.push_back(n);
+        Node node(i, x, y);
+        NodeArray.push_back(node);
         // increase index for next line
         i++;
     }
@@ -148,6 +150,7 @@ void allVisitedToFalse (std::vector<Node>& nodeArray){
 // Dijkstra
 std::pair<std::vector<double>, std::vector<int>> Dijkstra (int source, int target, const std::pair<std::vector<int>, std::vector<int>>& graph, std::vector<Node>& nodeArray){
     // Source, Target node index -1 so it fits into the data structure
+    std::cout << "Performing Djikstra..." << std::endl;
     assert(source > 0 and target > 0);
     source--;
     target--;
@@ -179,6 +182,8 @@ std::pair<std::vector<double>, std::vector<int>> Dijkstra (int source, int targe
                 dist[v->getIndex()] = d;
                 parent[v->getIndex()] = u->getIndex();
                 nodeArray[v->getIndex()].setVisited(true);
+
+                std::cout << "Target found!\nDistance: "<< d << std::endl;
                 return std::make_pair(dist, parent);
             }
             double d = dist[u->getIndex()] + eukld(u, v);
@@ -199,5 +204,14 @@ std::pair<std::vector<double>, std::vector<int>> Dijkstra (int source, int targe
             index++;
         }
     }
+    std::cout << "Target not found." << std::endl;
     return std::make_pair(dist, parent);
+}
+
+void printParentPath (const std::pair<std::vector<double>, std::vector<int>>& distanceAndParent, int source, int target){
+    int index = target-1;
+    while (distanceAndParent.second[index] != source-1){
+        std::cout << "Parent of "<< index << " is "<< distanceAndParent.second[index] + 1 << " with distance " << distanceAndParent.first[index] << " apart."<< std::endl;
+        index = distanceAndParent.second[index];
+    }
 }

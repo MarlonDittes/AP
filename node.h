@@ -9,6 +9,8 @@ class Node{
         double x,y;
         bool visited = false;
     public:
+        Node():
+            index(0), x(0), y(0){};
         Node(int i, double x, double y):
             index(i), x(x), y(y){};
 
