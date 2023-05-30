@@ -5,7 +5,7 @@
 #include "node.h"
 
 // Creating and printing Adjacency Array
-std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<std::pair<int, int>>& EdgeList, int n, int m);
+std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<std::pair<int,int>>& EdgeList, int n, int m);
 void printAdjArr (std::pair<std::vector<int>, std::vector<int>> adjacencyArray);
 
 // Reading Graph and Coordinate File
@@ -17,5 +17,8 @@ double eukld(Node u, Node v);
 void allVisitedToFalse (std::vector<Node>& nodeArray);
 std::pair<std::vector<double>, std::vector<int>> Dijkstra (int source, int target, const std::pair<std::vector<int>, std::vector<int>>& graph, std::vector<Node>& nodeArray);
 void printParentPath (const std::pair<std::vector<double>, std::vector<int>>& distanceAndParent, int source, int target);
+
+// ArcFlags Funktionen
+
 
 #endif

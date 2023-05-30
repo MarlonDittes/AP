@@ -8,7 +8,7 @@
 #include <cassert>
 
 // Create Adjacency Array using an EdgeList
-std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<std::pair<int, int>>& EdgeList, int n, int m){
+std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<std::pair<int,int>>& EdgeList, int n, int m){
     // init V to be only 0's
     // init E with 2*m for case of undirected Graph
     std::vector<int> V(n+1, 0);
@@ -67,12 +67,11 @@ std::pair<std::vector<int>, std::vector<int>> readGraphFile (std::string filenam
     std::string line;
     std::ifstream MyReadFile;
     MyReadFile.open(filename);
-    std::vector<std::pair<int, int>> EdgeList;
+    std::vector<std::pair<int,int>> EdgeList;
 
     if (!MyReadFile){
         std::cout << "Couldn't read graph file " << filename << ", try providing full path." << std::endl;
-        auto graph = createAdjArr(EdgeList, 0, 0);
-        return graph;
+        return createAdjArr(EdgeList, 0, 0);
     }
 
     // Read Number of Nodes (n) and Number of Edges (m)
@@ -87,16 +86,15 @@ std::pair<std::vector<int>, std::vector<int>> readGraphFile (std::string filenam
     // we have to decrease each Index by 1
     int u,v;
     u = 0;
+
     while (getline (MyReadFile, line)){
         std::istringstream iss(line);
         while (iss >> v){
             v--;
-            EdgeList.push_back(std::make_pair(u, v));
+            EdgeList.push_back(std::make_pair(u,v));
         }
         u++;
     }
-
-    // Create and return Graph using Adjacency Array
     auto graph = createAdjArr(EdgeList, n, m);
     return graph;
 }
