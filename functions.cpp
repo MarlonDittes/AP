@@ -6,17 +6,20 @@
 #include <cmath>
 #include "heap.h"
 #include <cassert>
+#include <unordered_map>
+#include "edge.h"
 
 // Create Adjacency Array using an EdgeList
-std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<std::pair<int,int>>& EdgeList, int n, int m){
+std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<Edge>& EdgeList, int n, int m){
     // init V to be only 0's
     // init E with 2*m for case of undirected Graph
     std::vector<int> V(n+1, 0);
     std::vector<int> E(2*m);
 
-    // count how many edges each node has
+    // count how many edges each node has and fill unordered Map
+    int i=0;
     for (const auto& edge: EdgeList){
-        V[edge.first]++;
+        V[edge.source]++;
     }
 
     // prefix sums for V
@@ -26,7 +29,7 @@ std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<std
 
     // init E
     for (const auto& edge: EdgeList){
-        E[--V[edge.first]] = edge.second;
+        E[--V[edge.source]] = edge.destination;
     }
 
     return std::make_pair(V, E);
@@ -67,7 +70,7 @@ std::pair<std::vector<int>, std::vector<int>> readGraphFile (std::string filenam
     std::string line;
     std::ifstream MyReadFile;
     MyReadFile.open(filename);
-    std::vector<std::pair<int,int>> EdgeList;
+    std::vector<Edge> EdgeList;
 
     if (!MyReadFile){
         std::cout << "Couldn't read graph file " << filename << ", try providing full path." << std::endl;
@@ -84,14 +87,16 @@ std::pair<std::vector<int>, std::vector<int>> readGraphFile (std::string filenam
     // Read edges, u counts at which line (Node) we are, v are corresponding neighbors
     // Since the graph files we read range from Indices 1 to n, but our Array V starts at 0
     // we have to decrease each Index by 1
-    int u,v;
+    int u,v,i;
     u = 0;
+    i = 0;
 
     while (getline (MyReadFile, line)){
         std::istringstream iss(line);
         while (iss >> v){
             v--;
-            EdgeList.push_back(std::make_pair(u,v));
+            Edge e(u,v,i++);
+            EdgeList.push_back(e);
         }
         u++;
     }

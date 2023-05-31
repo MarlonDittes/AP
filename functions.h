@@ -3,9 +3,10 @@
 #include <iostream>
 #include <vector>
 #include "node.h"
+#include "edge.h"
 
 // Creating and printing Adjacency Array
-std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<std::pair<int,int>>& EdgeList, int n, int m);
+std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<Edge>& EdgeList, int n, int m);
 void printAdjArr (std::pair<std::vector<int>, std::vector<int>> adjacencyArray);
 
 // Reading Graph and Coordinate File
