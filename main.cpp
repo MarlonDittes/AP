@@ -13,23 +13,45 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     int partSize = std::stoi(partitionfile.substr(partitionfile.length()-2));
 
     // Setup needed arrays
-    auto graphAndEdgeIndices = readGraphFile(graphfile);
+    auto EdgeListNM = readGraphFile(graphfile);
+    auto& EdgeList = std::get<0>(EdgeListNM);
+    int& n = std::get<1>(EdgeListNM);
+    int& m = std::get<2>(EdgeListNM);
+
+    auto graphAndEdgeIndices = createAdjArr(EdgeList, n, m);
     auto& graph = graphAndEdgeIndices.first;
     auto& edgeIndices = graphAndEdgeIndices.second;
+
     auto nodeArray = readCoordFile(coordfile);
-    auto partitionArray = readPartitionFile(partitionfile);
+    readPartitionFile(partitionfile, nodeArray);
     allVisitedToFalse(nodeArray);
 
-    // Start timer
-    auto start = std::chrono::high_resolution_clock::now();
+    std::vector<bool> arcFlags(m*partSize);
+    //Start preprocessing with ArcFlags and timing it if there is no ArcFlag file provided
+    if (arcflagsfile == ""){
+        auto preProcStart = std::chrono::high_resolution_clock::now();
+
+        arcFlags = computeArcFlags(graph, nodeArray, edgeIndices, m, partSize);
+        saveArcFlags(arcFlags, m, partSize, partitionfile);
+
+        auto preProcDuration = std::chrono::high_resolution_clock::now() - preProcStart;
+        long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(preProcDuration).count();
+        std::cout << "Time taken by ArcFlags Preprocessing: " << microseconds <<  " microseconds.\n";
+    } else {
+        arcFlags = readArcFlags(arcflagsfile, m, partSize);
+    }
+
+    // Running and Timing Dijkstra
+    auto dijkstraStart = std::chrono::high_resolution_clock::now();
 
     // Run Dijkstra
-    auto result = Dijkstra(source, target, graph, nodeArray);
+    allVisitedToFalse(nodeArray);
+    auto result = Dijkstra(source, target, graph, nodeArray, edgeIndices, arcFlags, partSize);
 
     // End Timer
-    auto duration = std::chrono::high_resolution_clock::now() - start;
-    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
-    std::cout << "Time taken by algorithm: " << microseconds <<  " microseconds.\n";
+    auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;
+    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(dijkstraDuration).count();
+    std::cout << "Time taken by Dijkstra: " << microseconds <<  " microseconds.\n";
     return 0;
 
     // Look at Parent Path
@@ -91,10 +113,10 @@ int main(int argc, char **argv) {
 
     // Falls ein ArcFlags File mit dazu gegeben wurde:
     if(arcflagsfile->count == 0){
-        exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0], partitionfile->filename[0], arcflagsfile->filename[0]);
+        exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0], partitionfile->filename[0], "");
     } else{
         /* normal case: take the command line options at face value */
-        exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0], partitionfile->filename[0], "");
+        exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0], partitionfile->filename[0], arcflagsfile->filename[0]);
     }
 
 
