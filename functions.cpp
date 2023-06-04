@@ -25,7 +25,7 @@ std::pair<std::pair<std::vector<int>, std::vector<int>>, std::vector<std::vector
 
         // We use undirected Graphs, so for ArcFlags we will only take one directed edge per undirected edge
         if (edge.source < edge.destination){
-        edgeIndices[edge.source].push_back(std::make_pair(edge.destination, i++));
+            edgeIndices[edge.source].push_back(std::make_pair(edge.destination, i++));
         }
     }
 
@@ -279,6 +279,7 @@ std::vector<int> modifiedDijkstra (int source, const std::pair<std::vector<int>,
     nodeArray[source].setVisited(true);
 
     // loop
+    int count = 1;
     while(!Q.isEmpty()){
         // Delete Min, u is closest unexplored node
         Node* u = Q.deleteMin();
@@ -415,10 +416,8 @@ std::vector<bool> computeArcFlags(const std::pair<std::vector<int>, std::vector<
             for (int u = 0; u < parent.size(); u++){
                 // Find Index of v by going through the Edges of u
                 if (u == parent[u]){
-                    //std::cout << u  << " " << parent.size() << std::endl;
                     continue;
                 } else if (u < parent[u]){
-                    std::cout << u  << " " << parent[u] << std::endl;
                     for(auto pair : edgeIndices[u]){
                         if (pair.first == parent[u]){
                             arcFlags[(pair.second * k) + partIndex] = 1;
@@ -426,7 +425,6 @@ std::vector<bool> computeArcFlags(const std::pair<std::vector<int>, std::vector<
                         }
                     }
                 } else {
-                    std::cout << u  << " " << parent[u] << std::endl;
                     for(auto pair : edgeIndices[parent[u]]){
                         if (pair.first == u){
                             arcFlags[(pair.second * k) + partIndex] = 1;

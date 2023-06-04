@@ -26,20 +26,17 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     readPartitionFile(partitionfile, nodeArray);
     allVisitedToFalse(nodeArray);
 
-    std::vector<bool> arcFlags(m*partSize);
     //Start preprocessing with ArcFlags and timing it if there is no ArcFlag file provided
-    if (arcflagsfile == ""){
-        auto preProcStart = std::chrono::high_resolution_clock::now();
+    auto preProcStart = std::chrono::high_resolution_clock::now();
 
-        arcFlags = computeArcFlags(graph, nodeArray, edgeIndices, m, partSize);
-        saveArcFlags(arcFlags, m, partSize, partitionfile);
+    auto arcFlags = computeArcFlags(graph, nodeArray, edgeIndices, m, partSize);
+    saveArcFlags(arcFlags, m, partSize, partitionfile);
 
-        auto preProcDuration = std::chrono::high_resolution_clock::now() - preProcStart;
-        long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(preProcDuration).count();
-        std::cout << "Time taken by ArcFlags Preprocessing: " << microseconds <<  " microseconds.\n";
-    } else {
-        arcFlags = readArcFlags(arcflagsfile, m, partSize);
-    }
+    auto preProcDuration = std::chrono::high_resolution_clock::now() - preProcStart;
+    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(preProcDuration).count();
+    std::cout << "Time taken by ArcFlags Preprocessing: " << microseconds <<  " microseconds.\n";
+
+    // auto arcFlags = readArcFlags(arcflagsfile, m, partSize);
 
     // Running and Timing Dijkstra
     auto dijkstraStart = std::chrono::high_resolution_clock::now();
@@ -50,7 +47,7 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
 
     // End Timer
     auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;
-    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(dijkstraDuration).count();
+    microseconds = std::chrono::duration_cast<std::chrono::microseconds>(dijkstraDuration).count();
     std::cout << "Time taken by Dijkstra: " << microseconds <<  " microseconds.\n";
     return 0;
 
