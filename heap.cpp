@@ -54,9 +54,9 @@ Node* BinaryHeap::deleteMin() {
 }
 
 void BinaryHeap::clear() {
-    for (auto heapNode : heap) {
+    /*for (auto heapNode : heap) {
         delete heapNode.node;
-    }
+    }*/
     heap.clear();
     indices.clear();
     size = 0;

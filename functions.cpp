@@ -10,16 +10,22 @@
 #include "edge.h"
 
 // Create Adjacency Array using an EdgeList
-std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<Edge>& EdgeList, int n, int m){
+std::pair<std::pair<std::vector<int>, std::vector<int>>, std::vector<std::vector<std::pair<int, int>>>>  createAdjArr(const std::vector<Edge>& EdgeList, int n, int m){
     // init V to be only 0's
     // init E with 2*m for case of undirected Graph
     std::vector<int> V(n+1, 0);
     std::vector<int> E(2*m);
+    std::vector<std::vector<std::pair<int, int>>> edgeIndices(m);
 
-    // count how many edges each node has and fill unordered Map
+    // count how many edges each node has and give each edge an Index
     int i=0;
     for (const auto& edge: EdgeList){
         V[edge.source]++;
+
+        // We use undirected Graphs, so for ArcFlags we will only take one directed edge per undirected edge
+        if (edge.source < edge.destination){
+        edgeIndices[edge.source].push_back(std::make_pair(edge.destination, i++));
+        }
     }
 
     // prefix sums for V
@@ -32,7 +38,7 @@ std::pair<std::vector<int>, std::vector<int>> createAdjArr(const std::vector<Edg
         E[--V[edge.source]] = edge.destination;
     }
 
-    return std::make_pair(V, E);
+    return std::make_pair(std::make_pair(V, E), edgeIndices);
 }
 
 // Functionality of printing Adjacency Array for testing
@@ -65,7 +71,7 @@ void printAdjArr (std::pair<std::vector<int>, std::vector<int>> adjacencyArray){
 }
 
 // Create AdjArr from Graph file
-std::pair<std::vector<int>, std::vector<int>> readGraphFile (std::string filename){
+std::pair<std::pair<std::vector<int>, std::vector<int>>, std::vector<std::vector<std::pair<int, int>>>> readGraphFile (std::string filename){
     std::cout << "Reading Graph file..." << std::endl;
     std::string line;
     std::ifstream MyReadFile;
@@ -217,4 +223,28 @@ void printParentPath (const std::pair<std::vector<double>, std::vector<int>>& di
         std::cout << "Parent of "<< index << " is "<< distanceAndParent.second[index] + 1 << " with distance " << distanceAndParent.first[index] << " apart."<< std::endl;
         index = distanceAndParent.second[index];
     }
+}
+
+// Einlesen der mit KaHIP erstellten Partition
+std::vector<int> readPartitionFile(std::string filename){
+    std::cout << "Reading Partition file..." << std::endl;
+    std::string line;
+    std::ifstream MyReadFile;
+    MyReadFile.open(filename);
+    std::vector<int> partitionArray;
+
+    if (!MyReadFile){
+        std::cout << "Couldn't read partition file " << filename << ", try providing full path." << std::endl;
+        return partitionArray;
+    }
+
+    int partNr;
+    while (getline (MyReadFile, line)){
+        std::istringstream iss(line);
+        while (iss >> partNr){
+            partitionArray.push_back(partNr);
+        }
+    }
+
+    return partitionArray;
 }
