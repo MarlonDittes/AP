@@ -29,14 +29,14 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     //Start preprocessing with ArcFlags and timing it if there is no ArcFlag file provided
     auto preProcStart = std::chrono::high_resolution_clock::now();
 
-    auto arcFlags = computeArcFlags(graph, nodeArray, edgeIndices, m, partSize);
-    saveArcFlags(arcFlags, m, partSize, partitionfile);
+    //auto arcFlags = computeArcFlags(graph, nodeArray, edgeIndices, m, partSize);
+    //saveArcFlags(arcFlags, m, partSize, partitionfile);
 
     auto preProcDuration = std::chrono::high_resolution_clock::now() - preProcStart;
     long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(preProcDuration).count();
     std::cout << "Time taken by ArcFlags Preprocessing: " << microseconds <<  " microseconds.\n";
 
-    // auto arcFlags = readArcFlags(arcflagsfile, m, partSize);
+    auto arcFlags = readArcFlags(arcflagsfile, m, partSize);
 
     // Running and Timing Dijkstra
     auto dijkstraStart = std::chrono::high_resolution_clock::now();
