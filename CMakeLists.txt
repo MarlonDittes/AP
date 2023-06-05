@@ -4,7 +4,7 @@ project(practical VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_library(my_lib STATIC argtable3.c functions.cpp heap.cpp arcflag.cpp )
+add_library(my_lib STATIC argtable3.c functions.cpp heap.cpp)
 
 add_executable(practical main.cpp)
 target_link_libraries(practical my_lib )
