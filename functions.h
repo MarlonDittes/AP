@@ -18,7 +18,8 @@ std::vector<Node> readCoordFile (std::string filename);
 // Euklidische Norm, Visited = false für alle Nodes, Dijkstra und printParentPath
 double eukld(Node u, Node v);
 void allVisitedToFalse (std::vector<Node>& nodeArray);
-std::pair<std::vector<double>, std::vector<int>> Dijkstra (int source, int target, const std::pair<std::vector<int>, std::vector<int>>& graph, std::vector<Node>& nodeArray, std::vector<std::vector<std::pair<int, int>>> edgeIndices, std::vector<bool> arcFlags, int k);
+std::pair<std::vector<double>, std::vector<int>> Dijkstra (int source, int target, const std::pair<std::vector<int>, std::vector<int>>& graph, std::vector<Node>& nodeArray);
+std::pair<std::vector<double>, std::vector<int>> ArcFlagsDijkstra (int source, int target, const std::pair<std::vector<int>, std::vector<int>>& graph, std::vector<Node>& nodeArray, std::vector<std::vector<std::pair<int, int>>> edgeIndices, std::vector<bool> arcFlags, int k);
 void printParentPath (const std::pair<std::vector<double>, std::vector<int>>& distanceAndParent, int source, int target);
 
 // ArcFlags Funktionen

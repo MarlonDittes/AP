@@ -31,19 +31,18 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
 
     auto arcFlags = computeArcFlags(graph, nodeArray, edgeIndices, m, partSize);
     saveArcFlags(arcFlags, m, partSize, partitionfile);
+    //auto arcFlags = readArcFlags(arcflagsfile, m, partSize);
 
     auto preProcDuration = std::chrono::high_resolution_clock::now() - preProcStart;
     long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(preProcDuration).count();
     std::cout << "Time taken by ArcFlags Preprocessing: " << microseconds <<  " microseconds.\n";
 
-    //auto arcFlags = readArcFlags(arcflagsfile, m, partSize);
-
     // Running and Timing Dijkstra
     auto dijkstraStart = std::chrono::high_resolution_clock::now();
 
-    // Run Dijkstra
     allVisitedToFalse(nodeArray);
-    auto result = Dijkstra(source, target, graph, nodeArray, edgeIndices, arcFlags, partSize);
+    // auto result = Dijkstra(source, target, graph, nodeArray);
+    auto result = ArcFlagsDijkstra(source, target, graph, nodeArray, edgeIndices, arcFlags, partSize);
 
     // End Timer
     auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;

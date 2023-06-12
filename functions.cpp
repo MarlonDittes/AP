@@ -158,7 +158,65 @@ void allVisitedToFalse (std::vector<Node>& nodeArray){
 }
 
 // Dijkstra
-std::pair<std::vector<double>, std::vector<int>> Dijkstra (int source, int target, const std::pair<std::vector<int>, std::vector<int>>& graph, std::vector<Node>& nodeArray, std::vector<std::vector<std::pair<int, int>>> edgeIndices, std::vector<bool> arcFlags, int k){
+std::pair<std::vector<double>, std::vector<int>> Dijkstra (int source, int target, const std::pair<std::vector<int>, std::vector<int>>& graph, std::vector<Node>& nodeArray){
+    // Source, Target node index -1 so it fits into the data structure
+    std::cout << "Performing Djikstra..." << std::endl;
+    assert(source > 0 and target > 0);
+    source--;
+    target--;
+    // Create distance, parent Array and aPQ
+    // default distance is Infinity
+    // default parent is bottom (here -1)
+    std::vector<double> dist(graph.first.size()-1, INFINITY);
+    std::vector<int> parent(graph.first.size()-1, -1);
+    BinaryHeap Q;
+    // init source node and add into aPQ
+    parent[source] = source;
+    dist[source] = 0.0;
+
+    Q.insert(&nodeArray[source], 0.0);
+    nodeArray[source].setVisited(true);
+
+    int edgeIndex, index;
+    // loop
+    while(!Q.isEmpty()){
+        // Delete Min, u is closest unexplored node
+        Node* u = Q.deleteMin();
+        // Cancel Dijkstra when we were to explore target node
+        if (u->getIndex() == target){
+            std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
+            return std::make_pair(dist, parent);
+        }
+        // scan u, index := Index to find Neighbor Nodes in E
+        index = graph.first[u->getIndex()];
+        while(index < graph.first[u->getIndex()+1]){
+            // v := neighbor node of u
+            Node* v = &nodeArray[graph.second[index]];
+
+            double d = dist[u->getIndex()] + eukld(u, v);
+            if (d < dist[v->getIndex()]){
+                // new shortest distance for v, update distance and parent array
+                dist[v->getIndex()] = d;
+                parent[v->getIndex()] = u->getIndex();
+                if (!nodeArray[v->getIndex()].isVisited()){
+                    // v reached for first time, add to aPQ
+                    Q.insert(v, d);
+                    nodeArray[v->getIndex()].setVisited(true);
+                } else {
+                    // v already was in aPQ, update priority key in aPQ
+                    Q.decreasePriority(v, d);
+                }
+            }
+            // raise Index to find next Neighbor Node in E
+            index++;
+        }
+    }
+    std::cout << "Target not found." << std::endl;
+    return std::make_pair(dist, parent);
+}
+
+// Arc-Flags Dijkstra
+std::pair<std::vector<double>, std::vector<int>> ArcFlagsDijkstra (int source, int target, const std::pair<std::vector<int>, std::vector<int>>& graph, std::vector<Node>& nodeArray, std::vector<std::vector<std::pair<int, int>>> edgeIndices, std::vector<bool> arcFlags, int k){
     // Source, Target node index -1 so it fits into the data structure
     std::cout << "Performing Djikstra..." << std::endl;
     assert(source > 0 and target > 0);
