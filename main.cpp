@@ -18,9 +18,7 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     int& n = std::get<1>(EdgeListNM);
     int& m = std::get<2>(EdgeListNM);
 
-    auto graphAndEdgeIndices = createAdjArr(EdgeList, n, m);
-    auto& graph = graphAndEdgeIndices.first;
-    auto& edgeIndices = graphAndEdgeIndices.second;
+    auto graph = createAdjArr(EdgeList, n, m);
 
     auto nodeArray = readCoordFile(coordfile);
     readPartitionFile(partitionfile, nodeArray);
@@ -29,9 +27,9 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     //Start preprocessing with ArcFlags and timing it if there is no ArcFlag file provided
     auto preProcStart = std::chrono::high_resolution_clock::now();
 
-    auto arcFlags = computeArcFlags(graph, nodeArray, edgeIndices, m, partSize);
-    saveArcFlags(arcFlags, m, partSize, partitionfile);
-    //auto arcFlags = readArcFlags(arcflagsfile, m, partSize);
+    //auto arcFlags = computeArcFlags(graph, nodeArray, edgeIndices, m, partSize);
+    //saveArcFlags(arcFlags, m, partSize, partitionfile);
+    auto arcFlags = readArcFlags(arcflagsfile, m, partSize);
 
     auto preProcDuration = std::chrono::high_resolution_clock::now() - preProcStart;
     long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(preProcDuration).count();
@@ -41,8 +39,8 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     auto dijkstraStart = std::chrono::high_resolution_clock::now();
 
     allVisitedToFalse(nodeArray);
-    // auto result = Dijkstra(source, target, graph, nodeArray);
-    auto result = ArcFlagsDijkstra(source, target, graph, nodeArray, edgeIndices, arcFlags, partSize);
+    auto result = Dijkstra(source, target, graph, nodeArray);
+    //auto result = ArcFlagsDijkstra(source, target, graph, nodeArray, edgeIndices, arcFlags, partSize);
 
     // End Timer
     auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;

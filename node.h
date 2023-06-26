@@ -9,7 +9,8 @@ class Node{
         double x,y;
         bool visited = false;
         bool boundary = false;
-        int partition = 0;
+        int partition = -1;
+
     public:
         Node():
             index(0), x(0), y(0){};

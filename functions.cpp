@@ -11,22 +11,15 @@
 #include <tuple>
 
 // Create Adjacency Array using an EdgeList
-std::pair<std::pair<std::vector<int>, std::vector<int>>, std::vector<std::vector<std::pair<int, int>>>>  createAdjArr(const std::vector<Edge>& EdgeList, int n, int m){
+std::pair<std::vector<int>, std::vector<Edge>>  createAdjArr(const std::vector<Edge>& EdgeList, int n, int m){
     // init V to be only 0's
     // init E with 2*m for case of undirected Graph
     std::vector<int> V(n+1, 0);
-    std::vector<int> E(2*m);
-    std::vector<std::vector<std::pair<int, int>>> edgeIndices(n);
+    std::vector<Edge> E(2*m);
 
     // count how many edges each node has and give each edge an Index
-    int i=0;
     for (const auto& edge: EdgeList){
         V[edge.source]++;
-
-        // We use undirected Graphs, so for ArcFlags we will only take one directed edge per undirected edge
-        if (edge.source < edge.destination){
-            edgeIndices[edge.source].push_back(std::make_pair(edge.destination, i++));
-        }
     }
 
     // prefix sums for V
@@ -34,12 +27,22 @@ std::pair<std::pair<std::vector<int>, std::vector<int>>, std::vector<std::vector
         V[i]+=V[i-1];
     }
 
-    // init E
+    // init E and save Indices
     for (const auto& edge: EdgeList){
-        E[--V[edge.source]] = edge.destination;
+        E[--V[edge.source]] = edge;
     }
 
-    return std::make_pair(std::make_pair(V, E), edgeIndices);
+    // Save Indices for own Edge and backward Edge
+    int k = 0;
+    for (int i = 0; i < n; i++){
+        for (int j = V[i]; j < V[i+1]; j++){
+            E[j].index = k;
+            E[V[E[j].destination]].backwardsEdgeIndex = k;
+            k++;
+        }
+    }
+
+    return std::make_pair(V, E);
 }
 
 // Functionality of printing Adjacency Array for testing

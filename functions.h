@@ -8,7 +8,7 @@
 // Creating and printing Adjacency Array
 // First of Pair is the Graph Data Strucutre, so the adjacency array
 // Second of Pair is the EdgeIndices Array, used in ArcFlags functionality
-std::pair<std::pair<std::vector<int>, std::vector<int>>, std::vector<std::vector<std::pair<int, int>>>> createAdjArr(const std::vector<Edge>& EdgeList, int n, int m);
+std::pair<std::vector<int>, std::vector<int>>  createAdjArr(const std::vector<Edge>& EdgeList, int n, int m);
 void printAdjArr (std::pair<std::vector<int>, std::vector<int>> adjacencyArray);
 
 // Reading Graph and Coordinate File
