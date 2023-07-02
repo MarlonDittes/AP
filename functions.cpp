@@ -518,9 +518,11 @@ void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<
             sharedCount++;
 
             // Output the current count of completed nodes
-            #pragma omp critical
-            {
-                std::cout << "Nodes completed so far: " << sharedCount << std::endl;
+            if (sharedCount % 10 == 0){
+                #pragma omp critical
+                {
+                std::cout << "Nodes completed so far: " << sharedCount << " of " << count << std::endl;
+                }
             }
         }
     }
