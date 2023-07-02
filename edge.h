@@ -6,16 +6,27 @@
 class Edge{
     public:
         Edge():
-            source(-1), destination(-1), index(-1){};
+            source(-1), destination(-1){};
 
-        Edge(int s, int d, int i):
-            source(s), destination(d), index(i){};
+        Edge(int s, int d):
+            source(s), destination(d){};
 
 
         int source;
         int destination;
-        int index;
-        int backwardsEdgeIndex = -1;
+        double distance;
+        std::vector<bool> arcFlags;
+
+        int other(int node){
+            if (node == source){
+                return destination;
+            } else if (node == destination){
+                return source;
+            } else {
+                std::cout << "This node is not part of this Edge." << std::endl;
+                return 0;
+            }
+        }
 
 };
 

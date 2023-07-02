@@ -21,35 +21,36 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     auto graph = createAdjArr(EdgeList, n, m);
 
     auto nodeArray = readCoordFile(coordfile);
+    computeDistances(EdgeList, nodeArray);
+    initEdgeArcflags(EdgeList, partSize);
     readPartitionFile(partitionfile, nodeArray);
-    allVisitedToFalse(nodeArray);
 
-    //Start preprocessing with ArcFlags and timing it if there is no ArcFlag file provided
+    //Start preprocessing with ArcFlags and timing it
     auto preProcStart = std::chrono::high_resolution_clock::now();
 
-    //auto arcFlags = computeArcFlags(graph, nodeArray, edgeIndices, m, partSize);
-    //saveArcFlags(arcFlags, m, partSize, partitionfile);
-    auto arcFlags = readArcFlags(arcflagsfile, m, partSize);
+    if (arcflagsfile == ""){
+        computeArcFlags(EdgeList, graph, nodeArray, n);
+        saveArcFlags(EdgeList, partSize, partitionfile);
+    } else {
+        readArcFlags(EdgeList, arcflagsfile);
+    }
 
     auto preProcDuration = std::chrono::high_resolution_clock::now() - preProcStart;
     long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(preProcDuration).count();
     std::cout << "Time taken by ArcFlags Preprocessing: " << microseconds <<  " microseconds.\n";
 
     // Running and Timing Dijkstra
+    allVisitedToFalse(nodeArray);
     auto dijkstraStart = std::chrono::high_resolution_clock::now();
 
-    allVisitedToFalse(nodeArray);
-    auto result = Dijkstra(source, target, graph, nodeArray);
-    //auto result = ArcFlagsDijkstra(source, target, graph, nodeArray, edgeIndices, arcFlags, partSize);
+    //auto result = Dijkstra(source, target, graph, nodeArray);
+    auto result = ArcFlagsDijkstra(source, target, graph, nodeArray);
 
     // End Timer
     auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;
     microseconds = std::chrono::duration_cast<std::chrono::microseconds>(dijkstraDuration).count();
     std::cout << "Time taken by Dijkstra: " << microseconds <<  " microseconds.\n";
-    return 0;
 
-    // Look at Parent Path
-    printParentPath(result, source, target);
     return 0;
 }
 
