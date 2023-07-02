@@ -445,9 +445,7 @@ void computeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, st
         // Extract tree edges from parent array
         for (int u = 0; u < parent.size(); u++){
             // Find Index of v by going through the Edges of u
-            if (parent[u] == nullptr){
-                continue;
-            } else {
+            if (parent[u] != nullptr){
                 parent[u]->arcFlags[partIndex] = 1;
             }
         }
