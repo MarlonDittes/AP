@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include "edge.h"
 #include <tuple>
+#include <omp.h>
 
 // Create Adjacency Array using an EdgeList
 std::pair<std::vector<int>, std::vector<Edge*>>  createAdjArr(std::vector<Edge>& EdgeList, int n, int m){
@@ -455,3 +456,79 @@ void computeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, st
 
     return;
 }
+
+void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n){
+    std::cout << "Computing ArcFlags..." << std::endl;
+
+    // Iterate through all Edges
+    for (auto& edge : EdgeList){
+        int partIndex = nodeArray[edge.source].getPartition();
+        // Same Partition? -> ArcFlags for this Edge on their partition = 1
+        if (partIndex == nodeArray[edge.destination].getPartition()){
+            edge.arcFlags[partIndex] = 1;
+        } else {
+            nodeArray[edge.source].setBoundary(1);
+            nodeArray[edge.destination].setBoundary(1);
+        }
+    }
+
+    // Count boundary nodes for output (can comment this out for slightly quicker performance)
+    int count = 0;
+    for (auto& node : nodeArray){
+        if (node.isBoundary()){
+            count++;
+        }
+    }
+    std::cout << "Performing (backwards) Dijkstra on " << count << " boundary nodes..." << std::endl;
+
+
+    // Declare the counter variable as shared
+    int sharedCount = 0;
+
+    #pragma omp parallel shared(sharedCount)
+    {
+        // Now run (backwards) Dijkstra on all nodes we marked as boundary
+        std::vector<Edge*> parent(n, nullptr);
+        #pragma omp for
+        for (int i = 0; i < nodeArray.size(); i++) {
+            auto& node = nodeArray[i];
+            if (!node.isBoundary()) {
+                continue;
+            }
+
+            auto nodeArrayCopy = nodeArray;
+            allVisitedToFalse(nodeArrayCopy);
+            parent = modifiedDijkstra(node.getIndex(), graph, nodeArrayCopy);
+            int partIndex = node.getPartition();
+
+            // Extract tree edges from parent array
+            for (int u = 0; u < parent.size(); u++) {
+                // Find Index of v by going through the Edges of u
+                if (parent[u] != nullptr) {
+                    // Lock the update of arcFlags
+                    #pragma omp critical
+                    {
+                        parent[u]->arcFlags[partIndex] = 1;
+                    }
+                }
+            }
+
+            // Increase the shared count
+            #pragma omp atomic
+            sharedCount++;
+
+            // Output the current count of completed nodes
+            #pragma omp critical
+            {
+                std::cout << "Nodes completed so far: " << sharedCount << std::endl;
+            }
+        }
+    }
+
+    // Output the final count
+    std::cout << "Total nodes completed: " << sharedCount << std::endl;
+
+
+    return;
+}
+

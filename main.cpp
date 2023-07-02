@@ -29,7 +29,7 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     auto preProcStart = std::chrono::high_resolution_clock::now();
 
     if (arcflagsfile == ""){
-        computeArcFlags(EdgeList, graph, nodeArray, n);
+        parallelComputeArcFlags(EdgeList, graph, nodeArray, n);
         saveArcFlags(EdgeList, partSize, partitionfile);
     } else {
         readArcFlags(EdgeList, arcflagsfile);
