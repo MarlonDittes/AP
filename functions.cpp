@@ -486,7 +486,6 @@ void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<
     #pragma omp parallel shared(sharedCount)
     {
         // Now run (backwards) Dijkstra on all nodes we marked as boundary
-        std::vector<Edge*> parent(n, nullptr);
         #pragma omp for
         for (int i = 0; i < nodeArray.size(); i++) {
             auto& node = nodeArray[i];
@@ -496,7 +495,7 @@ void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<
 
             auto nodeArrayCopy = nodeArray;
             allVisitedToFalse(nodeArrayCopy);
-            parent = modifiedDijkstra(node.getIndex(), graph, nodeArrayCopy);
+            auto parent = modifiedDijkstra(i, graph, nodeArrayCopy);
             int partIndex = node.getPartition();
 
             // Extract tree edges from parent array
