@@ -365,6 +365,7 @@ void initEdgeArcflags (std::vector<Edge>& EdgeList, int k){
 
 // Sichern der ArcFlags, sodass man nicht jedes mal neu berechnen muss
 void saveArcFlags(std::vector<Edge>& EdgeList, int k, std::string filename){
+    std::cout << "Saving ArcFlags..." << std::endl;
     std::string path = filename + ".arcfl";
     std::ofstream outputFile(path);
 
