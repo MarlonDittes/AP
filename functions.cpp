@@ -258,11 +258,14 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
         index = graph.first[uInd];
         while(index < graph.first[uInd+1]){
             // v := neighbor node of u
+            if (!graph.second[index]->arcFlags[partIndex]){
+                continue;
+            }
             Node* v = &nodeArray[graph.second[index]->other(uInd)];
             int vInd = v->getIndex();
             double d = dist[uInd] + graph.second[index]->distance;
 
-            if ((d < dist[vInd]) &&  graph.second[index]->arcFlags[partIndex]){
+            if ((d < dist[vInd]) /*&&  graph.second[index]->arcFlags[partIndex]*/){
                 // new shortest distance for v, update distance and parent array
                 dist[vInd] = d;
                 parent[vInd] = graph.second[index];
