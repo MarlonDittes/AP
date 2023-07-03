@@ -179,7 +179,8 @@ std::pair<std::vector<double>, std::vector<Edge*>> Dijkstra (int source, int tar
     parent[source] = nullptr;
     dist[source] = 0.0;
 
-    Q.insert(&nodeArray[source], 0.0);
+    int potentialSource = eukld(&nodeArray[source], &nodeArray[target]);
+    Q.insert(&nodeArray[source], 0.0 + potentialSource);
     nodeArray[source].setVisited(true);
 
     int index;
@@ -205,13 +206,14 @@ std::pair<std::vector<double>, std::vector<Edge*>> Dijkstra (int source, int tar
                 // new shortest distance for v, update distance and parent array
                 dist[vInd] = d;
                 parent[vInd] = graph.second[index];
+                int potentialV = eukld(v, &nodeArray[target]);
                 if (!nodeArray[vInd].isVisited()){
                     // v reached for first time, add to aPQ
-                    Q.insert(v, d);
+                    Q.insert(v, d + potentialV);
                     nodeArray[vInd].setVisited(true);
                 } else {
                     // v already was in aPQ, update priority key in aPQ
-                    Q.decreasePriority(v, d);
+                    Q.decreasePriority(v, d + potentialV);
                 }
             }
             // raise Index to find next Neighbor Node in E
@@ -239,7 +241,8 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
     parent[source] = nullptr;
     dist[source] = 0.0;
 
-    Q.insert(&nodeArray[source], 0.0);
+    int potentialSource = eukld(&nodeArray[source], &nodeArray[target]);
+    Q.insert(&nodeArray[source], 0.0 + potentialSource);
     nodeArray[source].setVisited(true);
 
     int partIndex = nodeArray[target].getPartition();
@@ -269,13 +272,14 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
                 // new shortest distance for v, update distance and parent array
                 dist[vInd] = d;
                 parent[vInd] = graph.second[index];
+                int potentialV = eukld(v, &nodeArray[target]);
                 if (!nodeArray[vInd].isVisited()){
                     // v reached for first time, add to aPQ
-                    Q.insert(v, d);
+                    Q.insert(v, d + potentialV);
                     nodeArray[vInd].setVisited(true);
                 } else {
                     // v already was in aPQ, update priority key in aPQ
-                    Q.decreasePriority(v, d);
+                    Q.decreasePriority(v, d + potentialV);
                 }
             }
             // raise Index to find next Neighbor Node in E
