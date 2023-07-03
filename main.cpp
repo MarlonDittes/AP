@@ -8,7 +8,7 @@
 #include "heap.h"
 
 // "Real main function"
-int mymain(int source, int target, std::string graphfile, std::string coordfile, std::string partitionfile, std::string arcflagsfile){
+int mymain(int source, int target, std::string graphfile, std::string coordfile, std::string partitionfile, std::string arcflagsfile, int mode){
     // Extract Partition size from name
     int partSize = std::stoi(partitionfile.substr(partitionfile.length()-2));
 
@@ -43,8 +43,14 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     allVisitedToFalse(nodeArray);
     auto dijkstraStart = std::chrono::high_resolution_clock::now();
 
-    //auto result = Dijkstra(source, target, graph, nodeArray);
-    auto result = ArcFlagsDijkstra(source, target, graph, nodeArray);
+
+    if (mode == 1){
+        auto result = Dijkstra(source, target, graph, nodeArray);
+    } else if (mode == 2){
+        auto result = ArcFlagsDijkstra(source, target, graph, nodeArray);
+    } else {
+        std::cout << "No mode selected. Select 1 for Dijkstra, 2 for ArcFlagsDijkstra." << std::endl;
+    }
 
     // End Timer
     auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;
@@ -63,9 +69,10 @@ int main(int argc, char **argv) {
     struct arg_file *coordfile = arg_file0("c",NULL,"<input>",          "coordinate file source");
     struct arg_file *partitionfile = arg_file0("p",NULL,"<input>",      "partition file source");
     struct arg_file *arcflagsfile = arg_file0("a",NULL,"<input>",      "(optional) arcflags file source");
+    struct arg_int *mode = arg_int0("m", "mode",NULL,          "select mode: Dijkstra (1), ArcFlagsDijkstra (2)");
     struct arg_lit *help  = arg_lit0(NULL,"help",             "print this help and exit");
     struct arg_end *end   = arg_end(20);
-    void* argtable[] = {source,target,graphfile,coordfile,partitionfile,arcflagsfile,help,end};
+    void* argtable[] = {source,target,graphfile,coordfile,partitionfile,arcflagsfile,mode,help,end};
     int nerrors;
     int exitcode=0;
 
@@ -108,10 +115,10 @@ int main(int argc, char **argv) {
 
     // Falls ein ArcFlags File mit dazu gegeben wurde:
     if(arcflagsfile->count == 0){
-        exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0], partitionfile->filename[0], "");
+        exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0], partitionfile->filename[0], "", mode->ival[0]);
     } else{
         /* normal case: take the command line options at face value */
-        exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0], partitionfile->filename[0], arcflagsfile->filename[0]);
+        exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0], partitionfile->filename[0], arcflagsfile->filename[0], mode->ival[0]);
     }
 
 
