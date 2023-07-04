@@ -298,14 +298,15 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
         while(index < graph.first[uInd+1]){
             // v := neighbor node of u
             if (graph.second[index].arcFlags[partIndex] == 0){
-                std::cout << "Skipped" << std::endl;
+                //std::cout << "Skipped" << std::endl;
+                index++;
                 continue;
             }
             Node* v = &nodeArray[graph.second[index].destination];
             int vInd = v->getIndex();
             double d = dist[uInd] + graph.second[index].distance;
 
-            if ((d < dist[vInd]) && graph.second[index].arcFlags[partIndex]){
+            if ((d < dist[vInd]) /*&& graph.second[index].arcFlags[partIndex]*/){
                 // new shortest distance for v, update distance and parent array
                 dist[vInd] = d;
                 parent[vInd] = &graph.second[index];
@@ -515,7 +516,7 @@ void readArcFlags(std::pair<std::vector<int>, std::vector<Edge>>& graph, std::st
     while (getline (MyReadFile, line)){
         j = 0;
         for (char c : line){
-            graph.second[i].arcFlags[j] = c;
+            graph.second[i].arcFlags[j] = (c == '1');
             j++;
         }
         i++;
