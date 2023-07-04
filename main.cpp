@@ -18,18 +18,18 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     auto graph = createAdjArr(EdgeList, n, m);
 
     auto nodeArray = readCoordFile(coordfile);
-    computeDistances(EdgeList, nodeArray);
-    initEdgeArcflags(EdgeList, partSize);
+    computeDistances(graph, nodeArray);
+    initEdgeArcflags(graph, partSize);
     readPartitionFile(partitionfile, nodeArray);
 
     //Start preprocessing with ArcFlags and timing it
     auto preProcStart = std::chrono::high_resolution_clock::now();
 
     if (arcflagsfile == ""){
-        parallelComputeArcFlags(EdgeList, graph, nodeArray, n);
-        saveArcFlags(EdgeList, partSize, partitionfile);
+        parallelComputeArcFlags(graph, nodeArray, n);
+        saveArcFlags(graph, partSize, partitionfile);
     } else {
-        readArcFlags(EdgeList, arcflagsfile);
+        readArcFlags(graph, arcflagsfile);
     }
 
     auto preProcDuration = std::chrono::high_resolution_clock::now() - preProcStart;
@@ -40,13 +40,23 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     allVisitedToFalse(nodeArray);
     auto dijkstraStart = std::chrono::high_resolution_clock::now();
 
-
-    if (mode == 1){
-        auto result = Dijkstra(source, target, graph, nodeArray);
-    } else if (mode == 2){
-        auto result = ArcFlagsDijkstra(source, target, graph, nodeArray);
-    } else {
-        std::cout << "No mode selected. Select 1 for Dijkstra, 2 for ArcFlagsDijkstra." << std::endl;
+    std::pair<std::vector<double>, std::vector<Edge*>> result;
+    switch (mode){
+        case 1:
+            result = Dijkstra(source, target, graph, nodeArray);
+            break;
+        case 2:
+            result = ArcFlagsDijkstra(source, target, graph, nodeArray);
+            break;
+        case 3:
+            result = AStarDijkstra(source, target, graph, nodeArray);
+            break;
+        case 4:
+            result = AStarArcFlagsDijkstra(source, target, graph, nodeArray);
+            break;
+        default:
+            std::cout << "No mode selected. Select 1 for Dijkstra, 2 for ArcFlagsDijkstra, 3 for AStarDijkstra, 4 for AStarArcFlagsDijkstra." << std::endl;
+            break;
     }
 
     // End Timer
@@ -67,7 +77,7 @@ int main(int argc, char **argv) {
     struct arg_file *partitionfile = arg_file0("p",NULL,"<input>",      "partition file source");
     struct arg_int *partSize = arg_int0("k", "k",NULL,          "size of the partititon");
     struct arg_file *arcflagsfile = arg_file0("a",NULL,"<input>",      "(optional) arcflags file source");
-    struct arg_int *mode = arg_int0("m", "mode",NULL,          "select mode: Dijkstra (1), ArcFlagsDijkstra (2)");
+    struct arg_int *mode = arg_int0("m", "mode",NULL,          "select mode: Dijkstra (1), ArcFlagsDijkstra (2), AStarDijkstra (3), AStarArcFlagsDijkstra (4)");
     struct arg_lit *help  = arg_lit0(NULL,"help",             "print this help and exit");
     struct arg_end *end   = arg_end(20);
     void* argtable[] = {source,target,graphfile,coordfile,partitionfile,partSize,arcflagsfile,mode,help,end};

@@ -11,6 +11,10 @@ class Node{
         bool boundary = false;
         int partition = -1;
 
+        //Heap Stuff
+        int heapIndex = -1;
+        double heapPriority = -1;
+
     public:
         Node():
             index(0), x(0), y(0){};
@@ -29,6 +33,13 @@ class Node{
 
         void setPartition (int p) { this->partition = p; };
         int getPartition () { return this->partition; };
+
+        //Heap Stuff
+        void setHeapIndex (int h) { this->heapIndex = h; };
+        int getHeapIndex () { return this->heapIndex; };
+
+        void setHeapPriority (double p) { this->heapPriority = p; };
+        double getHeapPriority () { return this->heapPriority; };
 
         bool operator==(const Node& other) const {
             return index == other.index;

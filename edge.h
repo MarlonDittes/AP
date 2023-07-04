@@ -14,20 +14,9 @@ class Edge{
 
         int source;
         int destination;
+        int backwardEIndex = -1;
         double distance;
         std::vector<bool> arcFlags;
-
-        int other(int node){
-            if (node == source){
-                return destination;
-            } else if (node == destination){
-                return source;
-            } else {
-                std::cout << "This node is not part of this Edge." << std::endl;
-                return 0;
-            }
-        }
-
 };
 
 #endif

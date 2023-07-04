@@ -22,12 +22,10 @@ private:
         int index;
     };
     std::vector<HeapNode> heap;
-    std::unordered_map<Node*, int> indices;
 
     int size;
     void heapifyUp(int index);
     void heapifyDown(int index);
-    void swapNodes(int index1, int index2);
 };
 
 #endif

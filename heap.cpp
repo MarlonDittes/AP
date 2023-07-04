@@ -18,16 +18,15 @@ void BinaryHeap::insert(Node* node, double priority) {
     HeapNode heapNode;
     heapNode.node = node;
     heapNode.priority = priority;
-    heapNode.index = size;
+    node->setHeapIndex(size);
 
     heap.push_back(heapNode);
-    indices[node] = size;
     size++;
-    heapifyUp(heapNode.index);
+    heapifyUp(node->getHeapIndex());
 }
 
 void BinaryHeap::decreasePriority(Node* node, double priority) {
-    int index = indices[node];
+    int index = node->getHeapIndex();
     heap[index].priority = priority;
     heapifyUp(index);
 }
@@ -38,13 +37,12 @@ Node* BinaryHeap::deleteMin() {
     }
 
     Node *minNode = heap[0].node;
-    indices.erase(minNode);
 
     size--;
     if (size > 0) {
         HeapNode lastNode = heap[size];
         heap[0] = lastNode;
-        indices[lastNode.node] = 0;
+        lastNode.node->setHeapIndex(0);
         heapifyDown(0);
     }
 
@@ -58,7 +56,6 @@ void BinaryHeap::clear() {
         delete heapNode.node;
     }*/
     heap.clear();
-    indices.clear();
     size = 0;
 }
 
@@ -69,14 +66,14 @@ void BinaryHeap::heapifyUp(int index) {
         HeapNode parent = heap[parentIndex];
         if (heapNode.priority < parent.priority) {
             heap[index] = parent;
-            indices[parent.node] = index;
+            parent.node->setHeapIndex(index);
             index = parentIndex;
         } else {
             break;
         }
     }
     heap[index] = heapNode;
-    indices[heapNode.node] = index;
+    heapNode.node->setHeapIndex(index);
 }
 
 void BinaryHeap::heapifyDown(int index) {
@@ -102,18 +99,9 @@ void BinaryHeap::heapifyDown(int index) {
     if (minIndex != index) {
         HeapNode minNode = heap[minIndex];
         heap[index] = minNode;
-        indices[minNode.node] = index;
+        minNode.node->setHeapIndex(index);
         heap[minIndex] = heapNode;
-        indices[heapNode.node] = minIndex;
+        heapNode.node->setHeapIndex(minIndex);
         heapifyDown(minIndex);
     }
-}
-
-void BinaryHeap::swapNodes(int index1, int index2) {
-    HeapNode node1 = heap[index1];
-    HeapNode node2 = heap[index2];
-    heap[index1] = node2;
-    heap[index2] = node1;
-    indices[node1.node] = index2;
-    indices[node2.node] = index1;
 }
