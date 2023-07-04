@@ -297,7 +297,6 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
         index = graph.first[uInd];
         while(index < graph.first[uInd+1]){
             // v := neighbor node of u
-            std::cout << index << " " << partIndex << " " << graph.second[index].arcFlags[partIndex] << std::endl;
             if (graph.second[index].arcFlags[partIndex] == 0){
                 std::cout << "Skipped" << std::endl;
                 continue;
