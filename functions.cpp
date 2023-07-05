@@ -120,10 +120,10 @@ double eukld(Node* u, Node* v) {
 }
 
 //Berechne Distanz für alle Edges im Graph
-void computeDistances(std::vector<Edge>& EdgeList, std::vector<Node>& nodeArray){
+void computeDistances(std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray){
     //Iterate through all Edges
-    for (auto& edge : EdgeList){
-        edge.distance = eukld(&nodeArray[edge.source], &nodeArray[edge.destination]);
+    for (int i = 0; i < graph.second.size(); i++){
+        graph.second[i]->distance = eukld(&nodeArray[graph.second[i]->source], &nodeArray[graph.second[i]->destination]);
     }
 }
 
@@ -453,20 +453,21 @@ std::vector<Edge*> modifiedDijkstra (int source, std::pair<std::vector<int>, std
     return parent;
 }
 
-void initEdgeArcflags (std::vector<Edge>& EdgeList, int k){
+void initEdgeArcflags (std::pair<std::vector<int>, std::vector<Edge*>>& graph, int k){
     //Iterate through all Edges
-    for (auto& edge : EdgeList){
-        edge.arcFlagsBackwards.resize(k);
-        edge.arcFlagsForwards.resize(k);
+    for (int i = 0; i < graph.second.size(); i++){
+        graph.second[i]->arcFlagsBackwards.resize(k);
+        graph.second[i]->arcFlagsForwards.resize(k);
+        //Init all to 0
         for (int j = 0; j < k; j++){
-            edge.arcFlagsBackwards[j] = 0;
-            edge.arcFlagsForwards[j] = 0;
+            graph.second[i]->arcFlagsBackwards[j] = 0;
+            graph.second[i]->arcFlagsForwards[j] = 0;
         }
     }
 }
 
 // Sichern der ArcFlags, sodass man nicht jedes mal neu berechnen muss
-void saveArcFlags(std::vector<Edge>& EdgeList, int k, std::string filename){
+void saveArcFlags(std::pair<std::vector<int>, std::vector<Edge*>>& graph, int k, std::string filename){
     std::cout << "Saving ArcFlags..." << std::endl;
     std::string path = filename + ".arcfl";
     std::ofstream outputFile(path);
@@ -476,15 +477,13 @@ void saveArcFlags(std::vector<Edge>& EdgeList, int k, std::string filename){
         return;
     }
 
-    for (auto& edge : EdgeList){
-        for (int j = 0; j < k; j++){
-            outputFile << edge.arcFlagsBackwards[j];
+    for (int i = 0; i < graph.first.size(); i++){
+        for (int j = graph.first[i]; j < graph.first[i+1]; j++){
+            for (int n = 0; n < k; n++){
+                outputFile << graph.second[j]->getArcFlag(i, n);
+            }
+            outputFile << std::endl;
         }
-        outputFile << std::endl;
-        for (int j = 0; j < k; j++){
-            outputFile << edge.arcFlagsForwards[j];
-        }
-        outputFile << std::endl;
     }
 
     outputFile.close();
@@ -492,7 +491,7 @@ void saveArcFlags(std::vector<Edge>& EdgeList, int k, std::string filename){
     return;
 }
 
-void readArcFlags(std::vector<Edge>& EdgeList, std::string filename){
+void readArcFlags(std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::string filename){
     std::cout << "Reading ArcFlags file..." << std::endl;
     std::string line;
     std::ifstream MyReadFile;
@@ -503,28 +502,14 @@ void readArcFlags(std::vector<Edge>& EdgeList, std::string filename){
         return;
     }
 
-    int i = 0;
-    int change = 0;
-    int j;
-    while (getline (MyReadFile, line)){
-        j = 0;
-        if(change == 0){
+    for (int i = 0; i < graph.first.size(); i++){
+        for (int j = graph.first[i]; j < graph.first[i+1]; j++){
+            getline (MyReadFile, line);
+            int k = 0;
             for (char c : line){
-                EdgeList[i].arcFlagsBackwards[j] = (c == '1');
-                j++;
+                graph.second[j]->setBackwardArcFlag(i, k, (c == '1'));
+                k++;
             }
-        } else {
-            for (char c : line){
-                EdgeList[i].arcFlagsForwards[j] = (c == '1');
-                j++;
-            }
-        }
-
-        if (change == 1){
-            i++;
-            --change;
-        } else{
-            ++change;
         }
     }
 
@@ -571,7 +556,7 @@ void computeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, st
             // Find Index of v by going through the Edges of u
             if (parent[u] != nullptr){
                 // Save Flag on backwards Edge
-                parent[u]->setBackwardArcFlag(u, partIndex);
+                parent[u]->setBackwardArcFlag(u, partIndex, 1);
             }
         }
         std::cout << "Node " << i++ << " done!" << std::endl;
@@ -630,7 +615,7 @@ void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<
                     // Save Flag on backwards Edge
                     #pragma omp critical
                     {
-                        parent[u]->setBackwardArcFlag(u, partIndex);
+                        parent[u]->setBackwardArcFlag(u, partIndex, 1);
                     }
                 }
             }

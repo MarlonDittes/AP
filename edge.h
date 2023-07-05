@@ -34,11 +34,11 @@ class Edge{
             }
         }
 
-        void setBackwardArcFlag(int d, int k){
+        void setBackwardArcFlag(int d, int k, bool b){
             if (d == source){
-                arcFlagsForwards[k] = 1;
+                arcFlagsForwards[k] = b;
             } else {
-                arcFlagsBackwards[k] = 1;
+                arcFlagsBackwards[k] = b;
             }
         }
 };
