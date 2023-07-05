@@ -202,7 +202,7 @@ std::pair<std::vector<double>, std::vector<Edge*>> Dijkstra (int source, int tar
 // A-Star Dijkstra
 std::pair<std::vector<double>, std::vector<Edge*>> AStarDijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge>>& graph, std::vector<Node>& nodeArray){
     // Source, Target node index -1 so it fits into the data structure
-    std::cout << "Performing Djikstra..." << std::endl;
+    std::cout << "Performing AStarDjikstra..." << std::endl;
     assert(source > 0 and target > 0 and source != target);
     source--;
     target--;
@@ -326,7 +326,7 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
 // A-Star Arc-Flags Dijkstra
 std::pair<std::vector<double>, std::vector<Edge*>> AStarArcFlagsDijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge>>& graph, std::vector<Node>& nodeArray){
     // Source, Target node index -1 so it fits into the data structure
-    std::cout << "Performing ArcFlags Djikstra..." << std::endl;
+    std::cout << "Performing AStarArcFlags Djikstra..." << std::endl;
     assert(source > 0 and target > 0);
     source--;
     target--;
