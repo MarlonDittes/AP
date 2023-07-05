@@ -18,24 +18,24 @@ class Edge{
         std::vector<bool> arcFlagsForwards;
         std::vector<bool> arcFlagsBackwards;
 
-        int getDestination(int n){
-            if (n == source){
+        int getDestination(int s){
+            if (s == source){
                 return destination;
             } else {
                 return source;
             }
         }
 
-        bool getArcFlag(int n, int k){
-            if (n == source){
+        bool getArcFlag(int s, int k){
+            if (s == source){
                 return arcFlagsForwards[k];
             } else {
                 return arcFlagsBackwards[k];
             }
         }
 
-        void setBackwardArcFlag(int n, int k){
-            if (n == source){
+        void setBackwardArcFlag(int d, int k){
+            if (d == source){
                 arcFlagsForwards[k] = 1;
             } else {
                 arcFlagsBackwards[k] = 1;
