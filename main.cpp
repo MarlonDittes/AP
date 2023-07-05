@@ -18,8 +18,8 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     auto graph = createAdjArr(EdgeList, n, m);
 
     auto nodeArray = readCoordFile(coordfile);
-    computeDistances(EdgeList, nodeArray);
-    initEdgeArcflags(EdgeList, partSize);
+    computeDistances(graph, nodeArray);
+    initEdgeArcflags(graph, partSize);
     readPartitionFile(partitionfile, nodeArray);
 
     //Start preprocessing with ArcFlags and timing it
@@ -27,9 +27,9 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
 
     if (arcflagsfile == ""){
         parallelComputeArcFlags(graph, nodeArray, n);
-        saveArcFlags(EdgeList, partSize, partitionfile);
+        saveArcFlags(graph, partSize, partitionfile);
     } else {
-        readArcFlags(EdgeList, arcflagsfile);
+        readArcFlags(graph, arcflagsfile);
     }
 
     auto preProcDuration = std::chrono::high_resolution_clock::now() - preProcStart;
