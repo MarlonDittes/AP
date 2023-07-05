@@ -531,19 +531,18 @@ void readArcFlags(std::vector<Edge>& EdgeList, std::string filename){
     return;
 }
 
-void computeArcFlags(std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n){
+void computeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n){
     std::cout << "Computing ArcFlags..." << std::endl;
 
     // Iterate through all Edges
-    for (int i = 0; i < graph.second.size(); i++){
-        int partIndex = nodeArray[graph.second[i]->source].getPartition();
-        // Same Partition? -> ArcFlags for this Edge on their partition = 1
-        if (partIndex == nodeArray[graph.second[i]->destination].getPartition()){
-            graph.second[i]->setBackwardArcFlag(graph.second[i]->source, partIndex);
-            graph.second[i]->setBackwardArcFlag(graph.second[i]->destination, partIndex);
+    for (auto& edge : EdgeList){
+        int partIndex = nodeArray[edge.source].getPartition();
+        if (partIndex == nodeArray[edge.destination].getPartition()){
+            edge.arcFlagsBackwards[partIndex] = 1;
+            edge.arcFlagsForwards[partIndex] = 1;
         } else {
-            nodeArray[graph.second[i]->source].setBoundary(1);
-            nodeArray[graph.second[i]->destination].setBoundary(1);
+            nodeArray[edge.source].setBoundary(1);
+            nodeArray[edge.destination].setBoundary(1);
         }
     }
 
@@ -581,19 +580,18 @@ void computeArcFlags(std::pair<std::vector<int>, std::vector<Edge*>>& graph, std
     return;
 }
 
-void parallelComputeArcFlags(std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n){
+void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n){
     std::cout << "Computing ArcFlags..." << std::endl;
 
     // Iterate through all Edges
-    for (int i = 0; i < graph.second.size(); i++){
-        int partIndex = nodeArray[graph.second[i]->source].getPartition();
-        // Same Partition? -> ArcFlags for this Edge on their partition = 1
-        if (partIndex == nodeArray[graph.second[i]->destination].getPartition()){
-            graph.second[i]->setBackwardArcFlag(graph.second[i]->source, partIndex);
-            graph.second[i]->setBackwardArcFlag(graph.second[i]->destination, partIndex);
+    for (auto& edge : EdgeList){
+        int partIndex = nodeArray[edge.source].getPartition();
+        if (partIndex == nodeArray[edge.destination].getPartition()){
+            edge.arcFlagsBackwards[partIndex] = 1;
+            edge.arcFlagsForwards[partIndex] = 1;
         } else {
-            nodeArray[graph.second[i]->source].setBoundary(1);
-            nodeArray[graph.second[i]->destination].setBoundary(1);
+            nodeArray[edge.source].setBoundary(1);
+            nodeArray[edge.destination].setBoundary(1);
         }
     }
 

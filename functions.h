@@ -29,6 +29,6 @@ std::vector<Edge*> modifiedDijkstra (int source, std::pair<std::vector<int>, std
 void initEdgeArcflags (std::vector<Edge>& EdgeList, int k);
 void saveArcFlags(std::vector<Edge>& EdgeList, int k, std::string filename);
 void readArcFlags(std::vector<Edge>& EdgeList, std::string filename);
-void computeArcFlags(std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n);
-void parallelComputeArcFlags(std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n);
+void computeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n);
+void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n);
 #endif
