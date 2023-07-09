@@ -9,6 +9,7 @@
 ################################
 result/
 build/
+plot/
 html/
 graph/
 

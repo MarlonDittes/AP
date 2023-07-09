@@ -35,4 +35,5 @@ void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<
 // Testing
 std::vector<std::pair<int, int>> readTestFile (std::string filename);
 void saveResults(std::vector<std::pair<double, long long>> distanceAndTime, std::string filename, int k, std::string type);
+void saveExploredNodes(std::vector<int> exploredNodes, std::string filename, std::vector<Node>& nodeArray);
 #endif

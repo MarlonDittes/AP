@@ -10,6 +10,7 @@
 #include "edge.h"
 #include <tuple>
 #include <omp.h>
+#include <iomanip>
 
 // Create Adjacency Array using an EdgeList
 std::pair<std::vector<int>, std::vector<Edge*>>  createAdjArr(std::vector<Edge>& EdgeList, int n, int m){
@@ -111,6 +112,27 @@ std::vector<Node> readCoordFile (std::string filename){
     return NodeArray;
 }
 
+void saveExploredNodes(std::vector<int> exploredNodes, std::string filename, std::vector<Node>& nodeArray){
+    std::cout << "Saving Explored Nodes..." << std::endl;
+    std::string path = filename;
+    std::ofstream outputFile(path);
+
+    if (!outputFile.is_open()){
+        std::cout << "Couldn't create explored nodes file " << filename << "." << std::endl;
+        return;
+    }
+
+    outputFile << std::fixed << std::setprecision(4);
+
+    for (auto& n : exploredNodes){
+        outputFile << std::fixed << nodeArray[n].getX() << " " << nodeArray[n].getY() << std::endl;
+    }
+
+    outputFile.close();
+    std::cout << "Data has been written to " << path << "." << std::endl;
+    return;
+}
+
 // Distanz Berechnung mittels Euklidischer Norm
 double eukld(Node* u, Node* v) {
     double norm = 0.0;
@@ -146,6 +168,9 @@ std::pair<std::vector<double>, std::vector<Edge*>> Dijkstra (int source, int tar
     // default parent is bottom (here -1)
     std::vector<double> dist(graph.first.size()-1, INFINITY);
     std::vector<Edge*> parent(graph.first.size()-1, nullptr);
+    // For Plotting:
+    //std::vector<int> exploredNodes;
+
     BinaryHeap Q;
     // init source node and add into aPQ
     parent[source] = nullptr;
@@ -160,8 +185,15 @@ std::pair<std::vector<double>, std::vector<Edge*>> Dijkstra (int source, int tar
         // Delete Min, u is closest unexplored node
         Node* u = Q.deleteMin();
         int uInd = u->getIndex();
+
+        // For Plotting:
+        //exploredNodes.push_back(uInd);
+
         // Cancel Dijkstra when we were to explore target node
         if (uInd == target){
+            // For Plotting:
+            //saveExploredNodes(exploredNodes, "../plot/Dijkstra" + std::to_string(source+1) + "to" + std::to_string(target+1), nodeArray);
+
             //std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
             return std::make_pair(dist, parent);
         }
@@ -206,6 +238,9 @@ std::pair<std::vector<double>, std::vector<Edge*>> AStarDijkstra (int source, in
     // default parent is bottom (here -1)
     std::vector<double> dist(graph.first.size()-1, INFINITY);
     std::vector<Edge*> parent(graph.first.size()-1, nullptr);
+    // For Plotting:
+    //std::vector<int> exploredNodes;
+
     BinaryHeap Q;
     // init source node and add into aPQ
     parent[source] = nullptr;
@@ -221,8 +256,15 @@ std::pair<std::vector<double>, std::vector<Edge*>> AStarDijkstra (int source, in
         // Delete Min, u is closest unexplored node
         Node* u = Q.deleteMin();
         int uInd = u->getIndex();
+
+        // For Plotting:
+        //exploredNodes.push_back(uInd);
+
         // Cancel Dijkstra when we were to explore target node
         if (uInd == target){
+            // For Plotting:
+            //saveExploredNodes(exploredNodes, "../plot/AStarDijkstra" + std::to_string(source+1) + "to" + std::to_string(target+1), nodeArray);
+
             //std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
             return std::make_pair(dist, parent);
         }
@@ -268,6 +310,9 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
     // default parent is bottom (here -1)
     std::vector<double> dist(graph.first.size()-1, INFINITY);
     std::vector<Edge*> parent(graph.first.size()-1, nullptr);
+    // For Plotting:
+    //std::vector<int> exploredNodes;
+
     BinaryHeap Q;
     // init source node and add into aPQ
     parent[source] = nullptr;
@@ -283,8 +328,15 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
         // Delete Min, u is closest unexplored node
         Node* u = Q.deleteMin();
         int uInd = u->getIndex();
+
+        // For Plotting:
+        //exploredNodes.push_back(uInd);
+
         // Cancel Dijkstra when we were to explore target node
         if (uInd == target){
+            // For Plotting:
+            //saveExploredNodes(exploredNodes, "../plot/ArcFlagsDijkstra" + std::to_string(source+1) + "to" + std::to_string(target+1), nodeArray);
+
             //std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
             return std::make_pair(dist, parent);
         }
@@ -330,6 +382,9 @@ std::pair<std::vector<double>, std::vector<Edge*>> AStarArcFlagsDijkstra (int so
     // default parent is bottom (here -1)
     std::vector<double> dist(graph.first.size()-1, INFINITY);
     std::vector<Edge*> parent(graph.first.size()-1, nullptr);
+    // For Plotting:
+    //std::vector<int> exploredNodes;
+
     BinaryHeap Q;
     // init source node and add into aPQ
     parent[source] = nullptr;
@@ -346,8 +401,15 @@ std::pair<std::vector<double>, std::vector<Edge*>> AStarArcFlagsDijkstra (int so
         // Delete Min, u is closest unexplored node
         Node* u = Q.deleteMin();
         int uInd = u->getIndex();
+
+        // For Plotting:
+        //exploredNodes.push_back(uInd);
+
         // Cancel Dijkstra when we were to explore target node
         if (uInd == target){
+            // For Plotting:
+            //saveExploredNodes(exploredNodes, "../plot/AStarArcFlagsDijkstra" + std::to_string(source+1) + "to" + std::to_string(target+1), nodeArray);
+
             //std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
             return std::make_pair(dist, parent);
         }
