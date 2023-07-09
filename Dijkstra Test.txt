@@ -1,4 +1,4 @@
-Source	Target	Distance	Zeit in ms
+Source	Target	Distance	Zeit in microseconds
 
 Belgien:
 

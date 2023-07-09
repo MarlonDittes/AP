@@ -31,4 +31,8 @@ void saveArcFlags(std::pair<std::vector<int>, std::vector<Edge*>>& graph, int k,
 void readArcFlags(std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::string filename);
 void computeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n);
 void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray, int n);
+
+// Testing
+std::vector<std::pair<int, int>> readTestFile (std::string filename);
+void saveResults(std::vector<std::pair<double, long long>> distanceAndTime, std::string filename, int k, std::string type);
 #endif

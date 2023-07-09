@@ -137,7 +137,7 @@ void allVisitedToFalse (std::vector<Node>& nodeArray){
 // Dijkstra
 std::pair<std::vector<double>, std::vector<Edge*>> Dijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray){
     // Source, Target node index -1 so it fits into the data structure
-    std::cout << "Performing Djikstra..." << std::endl;
+    //std::cout << "Performing Djikstra..." << std::endl;
     assert(source > 0 and target > 0 and source != target);
     source--;
     target--;
@@ -162,7 +162,7 @@ std::pair<std::vector<double>, std::vector<Edge*>> Dijkstra (int source, int tar
         int uInd = u->getIndex();
         // Cancel Dijkstra when we were to explore target node
         if (uInd == target){
-            std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
+            //std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
             return std::make_pair(dist, parent);
         }
         // scan u, index := Index to find Neighbor Nodes in E
@@ -190,14 +190,14 @@ std::pair<std::vector<double>, std::vector<Edge*>> Dijkstra (int source, int tar
             index++;
         }
     }
-    std::cout << "Target not found." << std::endl;
+    //std::cout << "Target not found." << std::endl;
     return std::make_pair(dist, parent);
 }
 
 // A-Star Dijkstra
 std::pair<std::vector<double>, std::vector<Edge*>> AStarDijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray){
     // Source, Target node index -1 so it fits into the data structure
-    std::cout << "Performing AStarDjikstra..." << std::endl;
+    //std::cout << "Performing AStarDjikstra..." << std::endl;
     assert(source > 0 and target > 0 and source != target);
     source--;
     target--;
@@ -223,7 +223,7 @@ std::pair<std::vector<double>, std::vector<Edge*>> AStarDijkstra (int source, in
         int uInd = u->getIndex();
         // Cancel Dijkstra when we were to explore target node
         if (uInd == target){
-            std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
+            //std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
             return std::make_pair(dist, parent);
         }
         // scan u, index := Index to find Neighbor Nodes in E
@@ -252,14 +252,14 @@ std::pair<std::vector<double>, std::vector<Edge*>> AStarDijkstra (int source, in
             index++;
         }
     }
-    std::cout << "Target not found." << std::endl;
+    //std::cout << "Target not found." << std::endl;
     return std::make_pair(dist, parent);
 }
 
 // Arc-Flags Dijkstra
 std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray){
     // Source, Target node index -1 so it fits into the data structure
-    std::cout << "Performing ArcFlags Djikstra..." << std::endl;
+    //std::cout << "Performing ArcFlags Djikstra..." << std::endl;
     assert(source > 0 and target > 0);
     source--;
     target--;
@@ -285,7 +285,7 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
         int uInd = u->getIndex();
         // Cancel Dijkstra when we were to explore target node
         if (uInd == target){
-            std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
+            //std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
             return std::make_pair(dist, parent);
         }
         // scan u, index := Index to find Neighbor Nodes in E
@@ -314,14 +314,14 @@ std::pair<std::vector<double>, std::vector<Edge*>> ArcFlagsDijkstra (int source,
             index++;
         }
     }
-    std::cout << "Target not found." << std::endl;
+    //std::cout << "Target not found." << std::endl;
     return std::make_pair(dist, parent);
 }
 
 // A-Star Arc-Flags Dijkstra
 std::pair<std::vector<double>, std::vector<Edge*>> AStarArcFlagsDijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray){
     // Source, Target node index -1 so it fits into the data structure
-    std::cout << "Performing AStarArcFlags Djikstra..." << std::endl;
+    //std::cout << "Performing AStarArcFlags Djikstra..." << std::endl;
     assert(source > 0 and target > 0);
     source--;
     target--;
@@ -348,7 +348,7 @@ std::pair<std::vector<double>, std::vector<Edge*>> AStarArcFlagsDijkstra (int so
         int uInd = u->getIndex();
         // Cancel Dijkstra when we were to explore target node
         if (uInd == target){
-            std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
+            //std::cout << "Target found!\nDistance: "<< dist[target] << std::endl;
             return std::make_pair(dist, parent);
         }
         // scan u, index := Index to find Neighbor Nodes in E
@@ -378,7 +378,7 @@ std::pair<std::vector<double>, std::vector<Edge*>> AStarArcFlagsDijkstra (int so
             index++;
         }
     }
-    std::cout << "Target not found." << std::endl;
+    //std::cout << "Target not found." << std::endl;
     return std::make_pair(dist, parent);
 }
 
@@ -640,3 +640,44 @@ void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<
     return;
 }
 
+std::vector<std::pair<int, int>> readTestFile (std::string filename){
+    std::cout << "Reading Test file..." << std::endl;
+    std::vector<std::pair<int, int>> testPairs;
+    std::string line;
+    std::ifstream MyReadFile;
+    MyReadFile.open(filename);
+
+    if (!MyReadFile){
+        std::cout << "Couldn't read test file " << filename << ", try providing full path." << std::endl;
+        return testPairs;
+    }
+
+    int source, target;
+    while (getline (MyReadFile, line)){
+        std::istringstream iss(line);
+        iss >> source;
+        iss >> target;
+        testPairs.push_back(std::make_pair(source, target));
+    }
+
+    return testPairs;
+}
+
+void saveResults(std::vector<std::pair<double, long long>> distanceAndTime, std::string filename, int k, std::string type){
+    std::cout << "Saving Test Results..." << std::endl;
+    std::string path = filename + type + std::to_string(k);
+    std::ofstream outputFile(path);
+
+    if (!outputFile.is_open()){
+        std::cout << "Couldn't create test result file " << filename << "." << std::endl;
+        return;
+    }
+
+    for (auto& pair : distanceAndTime){
+        outputFile << pair.first << " " << pair.second << std::endl;
+    }
+
+    outputFile.close();
+    std::cout << "Data has been written to " << path << "." << std::endl;
+    return;
+}
