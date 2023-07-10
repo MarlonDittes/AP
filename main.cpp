@@ -40,21 +40,26 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
     if(testfile == ""){
         // Running and Timing Dijkstra on one instance
         allVisitedToFalse(nodeArray);
+        std::string type;
         auto dijkstraStart = std::chrono::high_resolution_clock::now();
 
         std::pair<std::vector<double>, std::vector<Edge*>> result;
         switch (mode){
             case 1:
                 result = Dijkstra(source, target, graph, nodeArray);
+                type = "Dijkstra";
                 break;
             case 2:
                 result = ArcFlagsDijkstra(source, target, graph, nodeArray);
+                type = "ArcFlagsDijkstra";
                 break;
             case 3:
                 result = AStarDijkstra(source, target, graph, nodeArray);
+                type = "AStarDijkstra";
                 break;
             case 4:
                 result = AStarArcFlagsDijkstra(source, target, graph, nodeArray);
+                type = "AStarArcFlagsDijkstra";
                 break;
             default:
                 std::cout << "No mode selected. Select 1 for Dijkstra, 2 for ArcFlagsDijkstra, 3 for AStarDijkstra, 4 for AStarArcFlagsDijkstra." << std::endl;
@@ -65,7 +70,7 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
         auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;
         microseconds = std::chrono::duration_cast<std::chrono::microseconds>(dijkstraDuration).count();
         std::cout << "Distance: " << result.first[target - 1] << std::endl;
-        std::cout << "Time taken by Dijkstra: " << microseconds <<  " microseconds.\n";
+        std::cout << "Time taken by " + type + " " << microseconds <<  " microseconds.\n";
 
     } else {
         // Testing Dijkstra on multiple instances
