@@ -2,6 +2,11 @@
 #define EDGE_H
 #include <iostream>
 #include <vector>
+#include <bitset>
+
+#ifndef ARC_SIZE
+#define ARC_SIZE 32 // Standardgröße des Bitsets, wenn ARC_SIZE nicht definiert ist
+#endif
 
 class Edge{
     public:
@@ -15,8 +20,8 @@ class Edge{
         int source;
         int destination;
         double distance;
-        std::vector<bool> arcFlagsForwards;
-        std::vector<bool> arcFlagsBackwards;
+        std::bitset<ARC_SIZE> arcFlagsForwards;
+        std::bitset<ARC_SIZE> arcFlagsBackwards;
 
         int getDestination(int s){
             if (s == source){

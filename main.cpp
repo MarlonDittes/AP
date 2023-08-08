@@ -6,9 +6,18 @@
 #include "node.h"
 #include "functions.h"
 #include "heap.h"
+#include <fstream>
+
+#ifndef ARC_SIZE
+#define ARC_SIZE 32 // Standardgröße des Bitsets, wenn ARC_SIZE nicht definiert ist
+#endif
 
 // "Real main function"
-int mymain(int source, int target, std::string graphfile, std::string coordfile, std::string partitionfile, int partSize, std::string arcflagsfile, std::string testfile, int mode){
+int mymain(int source, int target, std::string graphfile, std::string testfile, int mode){
+    std::string coordfile = graphfile + ".xyz";
+    std::string partitionfile = graphfile + ".part" + std::to_string(ARC_SIZE);
+    std::string arcflagsfile = partitionfile + ".arcfl";
+
     // Setup needed arrays
     auto EdgeListNM = readGraphFile(graphfile);
     auto& EdgeList = std::get<0>(EdgeListNM);
@@ -19,15 +28,30 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
 
     auto nodeArray = readCoordFile(coordfile);
     computeDistances(graph, nodeArray);
-    initEdgeArcflags(graph, partSize);
+    initEdgeArcflags(graph, ARC_SIZE);
     readPartitionFile(partitionfile, nodeArray);
+
+    // get bottom left to top right
+    /*int bottomLeft = 0;
+    int topRight = 0;
+    for (int i = 0; i < nodeArray.size(); i++){
+        if (nodeArray[i].getX() <= nodeArray[bottomLeft].getX() && nodeArray[i].getY() <= nodeArray[bottomLeft].getY()){
+            bottomLeft = i;
+        }
+        if (nodeArray[i].getX() >= nodeArray[topRight].getX() && nodeArray[i].getY() >= nodeArray[topRight].getY()){
+            topRight = i;
+        }
+    }
+    source = bottomLeft + 1;
+    target = topRight + 1;*/
 
     //Start preprocessing with ArcFlags and timing it
     auto preProcStart = std::chrono::high_resolution_clock::now();
 
-    if (arcflagsfile == ""){
+    std::ifstream file(arcflagsfile);
+    if (!file.good()){
         parallelComputeArcFlags(EdgeList, graph, nodeArray, n);
-        saveArcFlags(graph, partSize, partitionfile);
+        saveArcFlags(graph, ARC_SIZE, partitionfile);
     } else {
         readArcFlags(graph, arcflagsfile);
     }
@@ -38,7 +62,7 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
 
 
     if(testfile == ""){
-        // Running and Timing Dijkstra on one instance
+        // Running and Timing Dijkstra on one instance using source and target
         allVisitedToFalse(nodeArray);
         std::string type;
         auto dijkstraStart = std::chrono::high_resolution_clock::now();
@@ -69,14 +93,15 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
         // End Timer
         auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;
         microseconds = std::chrono::duration_cast<std::chrono::microseconds>(dijkstraDuration).count();
+
         std::cout << "Distance: " << result.first[target - 1] << std::endl;
         std::cout << "Time taken by " + type + ": " << microseconds <<  " microseconds.\n";
 
     } else {
         // Testing Dijkstra on multiple instances
         auto testPairs = readTestFile(testfile);
-        std::pair<std::vector<double>, std::vector<Edge*>> result;
-        std::vector<std::pair<double, long long>> distanceAndTime(testPairs.size());
+        int result;
+        std::vector<std::pair<int, long long>> searchSpaceAndTime(testPairs.size());
         std::string type;
 
         std::cout << "Testing..." << std::endl;
@@ -91,19 +116,19 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
 
             switch (mode){
             case 1:
-                result = Dijkstra(pair.first, pair.second, graph, nodeArray);
+                result = searchSpaceDijkstra(pair.first, pair.second, graph, nodeArray);
                 type = "Dijkstra";
                 break;
             case 2:
-                result = ArcFlagsDijkstra(pair.first, pair.second, graph, nodeArray);
+                result = searchSpaceArcFlagsDijkstra(pair.first, pair.second, graph, nodeArray);
                 type = "ArcFlagsDijkstra";
                 break;
             case 3:
-                result = AStarDijkstra(pair.first, pair.second, graph, nodeArray);
+                result = searchSpaceAStarDijkstra(pair.first, pair.second, graph, nodeArray);
                 type = "AStarDijkstra";
                 break;
             case 4:
-                result = AStarArcFlagsDijkstra(pair.first, pair.second, graph, nodeArray);
+                result = searchSpaceAStarArcFlagsDijkstra(pair.first, pair.second, graph, nodeArray);
                 type = "AStarArcFlagsDijkstra";
                 break;
             default:
@@ -114,11 +139,10 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
             auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;
             microseconds = std::chrono::duration_cast<std::chrono::microseconds>(dijkstraDuration).count();
 
-            distanceAndTime[i] = std::make_pair(result.first[pair.second - 1], microseconds);
+            searchSpaceAndTime[i] = std::make_pair(result, microseconds);
             i++;
         }
-
-        saveResults(distanceAndTime, testfile, partSize, type);
+        saveResults(searchSpaceAndTime, testfile, ARC_SIZE, type);
     }
 
 
@@ -133,15 +157,11 @@ int main(int argc, char **argv) {
     struct arg_int *source = arg_int0("s", "source-node",NULL,          "define the source node");
     struct arg_int *target = arg_int0("t", "target-node",NULL,          "define the target node");
     struct arg_file *graphfile = arg_file0("g",NULL,"<input>",          "graph file source");
-    struct arg_file *coordfile = arg_file0("c",NULL,"<input>",          "coordinate file source");
-    struct arg_file *partitionfile = arg_file0("p",NULL,"<input>",      "partition file source");
-    struct arg_int *partSize = arg_int0("k", "k",NULL,          "size of the partititon");
-    struct arg_file *arcflagsfile = arg_file0("a",NULL,"<input>",      "(optional) arcflags file source");
-    struct arg_file *testfile = arg_file0("f",NULL,"<input>",      "(optional) file with random source and target for testing");
+    struct arg_file *testfile = arg_file0("f",NULL,"<input>",      "file with multiple instances, use instead of -s and -t");
     struct arg_int *mode = arg_int0("m", "mode",NULL,          "select: Dijkstra (1), ArcFlagsDijkstra (2), AStarDijkstra (3), AStarArcFlagsDijkstra (4)");
     struct arg_lit *help  = arg_lit0(NULL,"help",             "print this help and exit");
     struct arg_end *end   = arg_end(20);
-    void* argtable[] = {source,target,graphfile,coordfile,partitionfile,partSize,arcflagsfile,testfile,mode,help,end};
+    void* argtable[] = {source,target,graphfile,testfile,mode,help,end};
     int nerrors;
     int exitcode=0;
 
@@ -184,7 +204,7 @@ int main(int argc, char **argv) {
 
 
     /* normal case: take the command line options at face value */
-    exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], coordfile->filename[0], partitionfile->filename[0], partSize->ival[0], arcflagsfile->filename[0], testfile->filename[0], mode->ival[0]);
+    exitcode = mymain(source->ival[0], target->ival[0], graphfile->filename[0], testfile->filename[0], mode->ival[0]);
 
 
 

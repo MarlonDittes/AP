@@ -4,6 +4,8 @@ set(CMAKE_BUILD_TYPE Release)
 
 find_package(OpenMP REQUIRED)
 
+option(ARC_SIZE "Size of the std::bitset" 32)
+add_definitions(-DARC_SIZE=${ARC_SIZE})
 
 
 add_library(my_lib STATIC argtable3.c functions.cpp heap.cpp)

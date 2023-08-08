@@ -34,6 +34,12 @@ void parallelComputeArcFlags(std::vector<Edge>& EdgeList, std::pair<std::vector<
 
 // Testing
 std::vector<std::pair<int, int>> readTestFile (std::string filename);
-void saveResults(std::vector<std::pair<double, long long>> distanceAndTime, std::string filename, int k, std::string type);
+void saveResults(std::vector<std::pair<int, long long>> searchSpaceAndTime, std::string filename, int k, std::string type);
 void saveExploredNodes(std::vector<int> exploredNodes, std::string filename, std::vector<Node>& nodeArray);
+
+// Search Space Returning
+int searchSpaceDijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray);
+int searchSpaceAStarDijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray);
+int searchSpaceArcFlagsDijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray);
+int searchSpaceAStarArcFlagsDijkstra (int source, int target, std::pair<std::vector<int>, std::vector<Edge*>>& graph, std::vector<Node>& nodeArray);
 #endif
