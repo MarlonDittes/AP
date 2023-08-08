@@ -70,7 +70,7 @@ int mymain(int source, int target, std::string graphfile, std::string coordfile,
         auto dijkstraDuration = std::chrono::high_resolution_clock::now() - dijkstraStart;
         microseconds = std::chrono::duration_cast<std::chrono::microseconds>(dijkstraDuration).count();
         std::cout << "Distance: " << result.first[target - 1] << std::endl;
-        std::cout << "Time taken by " + type + " " << microseconds <<  " microseconds.\n";
+        std::cout << "Time taken by " + type + ": " << microseconds <<  " microseconds.\n";
 
     } else {
         // Testing Dijkstra on multiple instances
