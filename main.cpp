@@ -12,6 +12,7 @@
 #define ARC_SIZE 32 // Standardgröße des Bitsets, wenn ARC_SIZE nicht definiert ist
 #endif
 
+// Test
 // "Real main function"
 int mymain(int source, int target, std::string graphfile, std::string testfile, int mode){
     std::string coordfile = graphfile + ".xyz";
