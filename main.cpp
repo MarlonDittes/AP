@@ -32,7 +32,7 @@ int mymain(int source, int target, std::string graphfile, std::string testfile, 
     readPartitionFile(partitionfile, nodeArray);
 
     // get bottom left to top right
-    int bottomLeft = 0;
+    /*int bottomLeft = 0;
     int topRight = 0;
     for (int i = 0; i < nodeArray.size(); i++){
         if (nodeArray[i].getX() <= nodeArray[bottomLeft].getX() && nodeArray[i].getY() <= nodeArray[bottomLeft].getY()){
@@ -43,7 +43,7 @@ int mymain(int source, int target, std::string graphfile, std::string testfile, 
         }
     }
     source = bottomLeft + 1;
-    target = topRight + 1;
+    target = topRight + 1;*/
 
     //Start preprocessing with ArcFlags and timing it
     auto preProcStart = std::chrono::high_resolution_clock::now();
