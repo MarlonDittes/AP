@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{caption}
+
+\begin{document}
+
+\begin{algorithm}
+\captionsetup{labelformat=empty, labelsep=none}
+\caption{Arc-Flags Preprocessing (G = (V, E), part(·), Arc-Flags AF.(·))}
+\For{each edge $e (u,v) \in E$}{
+    \If{$part(u) = part(v)$}{
+        $AF_{V}(e) \gets$ 1\;
+    } \Else {
+        u.setBoundary();
+        v.setBoundary();
+    }
+}
+
+    \For{each boundary node $n \in V$}{
+        treeEdges $\gets backwardsDijkstra(n, G)$;
+    
+        \For{each edge $e (u,v) \in treeEdges$}{
+            $AF_{N}(e) \gets$ 1\;
+        }
+    }
+    \end{algorithm}
+
+\end{document}

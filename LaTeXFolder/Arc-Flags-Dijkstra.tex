@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{caption}
+
+\begin{document}
+
+\begin{algorithm}
+    \captionsetup{labelformat=empty, labelsep=none}
+    \caption{Arc-Flag-Dijkstra (G = (V, E), s, t, \colorbox{yellow}{Arc-Flags AF.(·)})}
+    \begin{algorithmic}[1]
+        \State $dist[s] = 0$
+        \State $Q.clear(), Q.add(s,0)$
+        \While{$!Q.empty()$}
+            \State $u \gets Q.deleteMin()$
+            \For{all $edges$ e = (u,v) $\in E$}
+                \If{$dist[u] + w_e < dist[v]$ \colorbox{yellow}{and $AF_{T}(e) = true$}}
+                    \State $dist[v] \gets dist[u] + len(e)$
+                    \If{$v \in Q$} \State $Q.decreaseKey(v, dist[v])$
+                    \Else{} \State $Q.insert(v, dist[v])$
+                    \EndIf
+                \EndIf
+            \EndFor
+        \EndWhile
+    \end{algorithmic}
+  \end{algorithm}
+
+\end{document}
